@@ -13,6 +13,7 @@ public class GameFrame extends JFrame {
     private GamePanel gamePanel;
     private OverlayPanel overlayPanel;
     private JLayeredPane layeredPane;
+    private com.tetris.controller.GameController controller;
 
     public GameFrame() {
         initComponents();
@@ -56,6 +57,21 @@ public class GameFrame extends JFrame {
 
     public OverlayPanel getOverlayPanel() {
         return overlayPanel;
+    }
+
+    /**
+     * Conecta o GameController à frame para que componentes (ex: OverlayPanel)
+     * possam chamar ações do controller (ex: iniciar o jogo através do botão Start).
+     */
+    public void setController(com.tetris.controller.GameController controller) {
+        this.controller = controller;
+        if (this.overlayPanel != null) {
+            this.overlayPanel.setController(controller);
+        }
+    }
+
+    public com.tetris.controller.GameController getController() {
+        return controller;
     }
 }
 

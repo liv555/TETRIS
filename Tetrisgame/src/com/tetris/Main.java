@@ -22,7 +22,10 @@ public class Main {
             // 3. Cria o Controller e conecta o Model e a View
             GameController gameController = new GameController(gameFrame, board);
 
-            // 4. Inicia o jogo e exibe a janela
+            // Conecta o controller à frame para que a UI (ex: OverlayPanel) possa usá-lo
+            gameFrame.setController(gameController);
+
+            // 4. Inicia o controller (timer & view) e exibe a janela
             gameController.start();
             gameFrame.setVisible(true);
         });

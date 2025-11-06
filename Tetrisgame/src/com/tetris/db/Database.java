@@ -1,6 +1,9 @@
 package com.tetris.db;
 
 import java.sql.*;
+import java.time.ZonedDateTime;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 
 public class Database {
     private static final String URL = "jdbc:sqlite:tetris.db";
@@ -36,13 +39,17 @@ public class Database {
     }
 
     public static void saveGame(String player, int score, int level, int lines) {
-        String sql = "INSERT INTO game_session (player_name, score, level, lines_cleared, date_time) VALUES (?, ?, ?, ?, datetime('now'))";
+        // Calcula a data/hora no fuso de Brasília (America/Sao_Paulo) e grava como texto
+        String sql = "INSERT INTO game_session (player_name, score, level, lines_cleared, date_time) VALUES (?, ?, ?, ?, ?)";
+        // Formato legível: yyyy-MM-dd HH:mm:ss
+        String dateTime = ZonedDateTime.now(ZoneId.of("America/Sao_Paulo")).format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
         try (Connection conn = connect();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.setString(1, player);
             pstmt.setInt(2, score);
             pstmt.setInt(3, level);
             pstmt.setInt(4, lines);
+            pstmt.setString(5, dateTime);
             pstmt.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();

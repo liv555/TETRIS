@@ -32,6 +32,22 @@ public class GameController extends KeyAdapter implements ActionListener {
         this.gameFrame.getGamePanel().setFocusable(true);
     }
 
+    /**
+     * Método público para ser chamado pela UI (botão Start) para iniciar o jogo.
+     * Repete a mesma lógica que o ENTER no keyPressed.
+     */
+    public void startGameFromUI() {
+        if ((!board.isStarted() || board.isGameOver())) {
+            board.start();
+            if (!timer.isRunning()) {
+                timer.start();
+            }
+            // garante foco para receber teclado
+            gameFrame.getGamePanel().requestFocusInWindow();
+            updateView();
+        }
+    }
+
     public void start() {
         timer.start();
         // Garantir que o painel tem foco para receber eventos de teclado
@@ -65,6 +81,7 @@ public class GameController extends KeyAdapter implements ActionListener {
 
         Theme currentTheme = Theme.AVAILABLE_THEMES[currentThemeIndex];
         gameFrame.getGamePanel().updateTheme(currentTheme);
+        gameFrame.getOverlayPanel().updateTheme(currentTheme);
 
         gameFrame.repaint();
     }
