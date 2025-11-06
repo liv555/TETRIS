@@ -1,5 +1,6 @@
 package com.tetris.controller;
 
+import com.tetris.db.Database;
 import com.tetris.model.Board;
 import com.tetris.model.Theme;
 import com.tetris.view.GameFrame;
@@ -33,6 +34,8 @@ public class GameController extends KeyAdapter implements ActionListener {
 
     public void start() {
         timer.start();
+        // Garantir que o painel tem foco para receber eventos de teclado
+        gameFrame.getGamePanel().requestFocusInWindow();
         updateView(); 
     }
 
@@ -43,9 +46,14 @@ public class GameController extends KeyAdapter implements ActionListener {
         }
         
         if (board.isGameOver()) {
+            // Parar o timer e gravar a sessão no DB
             timer.stop();
-            }
-        
+            Database.createTable();
+            Database.saveGame("Jogador1", board.getScore(), board.getLevel(), board.getLinesCleared());
+            updateView();
+            return;
+        }
+
         timer.setDelay(getDelayForLevel());
         updateView();
     }

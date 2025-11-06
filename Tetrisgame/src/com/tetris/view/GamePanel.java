@@ -4,6 +4,20 @@ import com.tetris.model.Theme;
 
 import javax.swing.JPanel;
 import java.awt.BorderLayout;
+import javax.swing.JButton;
+import javax.swing.Box;
+import javax.swing.BoxLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import javax.swing.SwingUtilities;
+import java.awt.Dimension;
+import java.awt.FlowLayout;
+import javax.swing.JFrame;
+import com.tetris.view.HistoryDialog;
+import javax.swing.BorderFactory;
+import java.awt.Color;
+import java.awt.Font;
+import javax.swing.border.Border;
 
 /**
  * Painel principal que contém e organiza os outros componentes da view.
@@ -13,6 +27,7 @@ public class GamePanel extends JPanel {
 
     private BoardPanel boardPanel;
     private InfoPanel infoPanel;
+    private JButton historyButton;
 
     public GamePanel() {
         initComponents();
@@ -24,8 +39,37 @@ public class GamePanel extends JPanel {
         boardPanel = new BoardPanel();
         infoPanel = new InfoPanel();
 
+        // Painel lateral que contém as info visual e botões
+        JPanel sidePanel = new JPanel();
+        sidePanel.setLayout(new BorderLayout());
+        sidePanel.add(infoPanel, BorderLayout.CENTER);
+
+        // Painel para botões embaixo
+        JPanel buttonsPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
+        historyButton = new JButton("Histórico");
+        historyButton.setToolTipText("Ver histórico de partidas");
+
+        // Estiliza o botão para combinar com o painel lateral
+        styleHistoryButton(historyButton, infoPanel.getBackground());
+
+        historyButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                // Abre diálogo de histórico sem roubar foco. Em seguida, garante que o GamePanel recupera o foco.
+                JFrame top = (JFrame) SwingUtilities.getWindowAncestor(GamePanel.this);
+                HistoryDialog dlg = new HistoryDialog(top);
+                dlg.setModal(false);
+                dlg.setVisible(true);
+
+                // Restaurar foco ao painel do jogo (pequeno atraso para garantir que a janela já está visível)
+                SwingUtilities.invokeLater(() -> GamePanel.this.requestFocusInWindow());
+            }
+        });
+        buttonsPanel.add(historyButton);
+        sidePanel.add(buttonsPanel, BorderLayout.SOUTH);
+
         add(boardPanel, BorderLayout.CENTER);
-        add(infoPanel, BorderLayout.EAST);
+        add(sidePanel, BorderLayout.EAST);
     }
 
     /**
@@ -34,6 +78,28 @@ public class GamePanel extends JPanel {
     public void updateTheme(Theme theme) {
         infoPanel.updateTheme(theme);
         boardPanel.updateTheme(theme);
+        if (historyButton != null) {
+            styleHistoryButton(historyButton, infoPanel.getBackground());
+        }
+    }
+
+    /**
+     * Aplica estilo ao botão de histórico de acordo com a cor de fundo do painel lateral.
+     */
+    private void styleHistoryButton(JButton btn, Color bg) {
+        Color blockColor = bg.darker();
+        Color borderColor = bg.brighter();
+        Color textColor = (bg.getRed() < 128) ? Color.WHITE : Color.BLACK;
+
+        btn.setOpaque(true);
+        btn.setContentAreaFilled(true);
+        btn.setBackground(blockColor);
+        btn.setForeground(textColor);
+        btn.setFont(new Font("Consolas", Font.BOLD, 13));
+        Border b = BorderFactory.createCompoundBorder(BorderFactory.createLineBorder(borderColor), BorderFactory.createEmptyBorder(6, 12, 6, 12));
+        btn.setBorder(b);
+        btn.setFocusPainted(false);
+        btn.setPreferredSize(new Dimension(140, 36));
     }
 
 
