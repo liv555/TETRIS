@@ -23,6 +23,7 @@ public class GameController extends KeyAdapter implements ActionListener {
     private final Board board;
     private final Timer timer;
     private int currentThemeIndex = 0;
+    private String playerName = "";
 
     public GameController(GameFrame gameFrame, Board board) {
         this.gameFrame = gameFrame;
@@ -38,6 +39,15 @@ public class GameController extends KeyAdapter implements ActionListener {
      */
     public void startGameFromUI() {
         if ((!board.isStarted() || board.isGameOver())) {
+            // exige que o nome do jogador esteja definido
+            if (playerName == null || playerName.trim().isEmpty()) {
+                // solicita foco ao campo de nome no overlay
+                if (gameFrame.getOverlayPanel() != null) {
+                    gameFrame.getOverlayPanel().requestFocusForName();
+                }
+                return;
+            }
+
             board.start();
             if (!timer.isRunning()) {
                 timer.start();
@@ -46,6 +56,10 @@ public class GameController extends KeyAdapter implements ActionListener {
             gameFrame.getGamePanel().requestFocusInWindow();
             updateView();
         }
+    }
+
+    public void setPlayerName(String name) {
+        this.playerName = name == null ? "" : name.trim();
     }
 
     public void start() {
@@ -65,7 +79,8 @@ public class GameController extends KeyAdapter implements ActionListener {
             // Parar o timer e gravar a sessão no DB
             timer.stop();
             Database.createTable();
-            Database.saveGame("Jogador1", board.getScore(), board.getLevel(), board.getLinesCleared());
+            String playerToSave = (playerName == null || playerName.trim().isEmpty()) ? "Jogador1" : playerName;
+            Database.saveGame(playerToSave, board.getScore(), board.getLevel(), board.getLinesCleared());
             updateView();
             return;
         }
@@ -104,6 +119,14 @@ public class GameController extends KeyAdapter implements ActionListener {
         }
 
         if ((!board.isStarted() || board.isGameOver()) && keycode == KeyEvent.VK_ENTER) {
+            // exige nome antes de iniciar com ENTER
+            if (playerName == null || playerName.trim().isEmpty()) {
+                if (gameFrame.getOverlayPanel() != null) {
+                    gameFrame.getOverlayPanel().requestFocusForName();
+                }
+                return;
+            }
+
             board.start();
             if (!timer.isRunning()) {
                 timer.start();

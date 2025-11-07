@@ -10,6 +10,10 @@ import javax.swing.Timer;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics;
+import java.awt.Image;
+import java.awt.image.BufferedImage;
+import javax.imageio.ImageIO;
+import java.io.IOException;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ComponentAdapter;
@@ -26,9 +30,13 @@ public class OverlayPanel extends JPanel {
     private JButton startButton;
     private Timer blinkTimer;
     private boolean showPress = true;
+    private BufferedImage backgroundImage;
+    private javax.swing.JTextField nameField;
+    private javax.swing.JLabel nameLabel;
 
     public OverlayPanel() {
         setOpaque(false); // Torna o painel transparente
+        loadBackgroundImage();
         initStartButton();
         // Ajusta posição do botão quando o painel muda de tamanho
         addComponentListener(new ComponentAdapter() {
@@ -38,6 +46,38 @@ public class OverlayPanel extends JPanel {
             }
         });
         initBlinker();
+    }
+
+    private void loadBackgroundImage() {
+        try {
+            // Tenta localizar a imagem no classpath em vários locais
+            java.net.URL url = null;
+            // 1) caminho absoluto padrão: /com/tetris/view/resources/menu_bg.png
+            url = getClass().getResource("/com/tetris/view/resources/menu_bg.png");
+            // 2) antigo caminho alternativo: /resources/menu_bg.png
+            if (url == null) url = getClass().getResource("/resources/menu_bg.png");
+
+            if (url != null) {
+                backgroundImage = ImageIO.read(url);
+                System.out.println("OverlayPanel: loaded background image from classpath: " + url);
+                return;
+            }
+
+            // 3) fallback: tenta carregar diretamente do sistema de arquivos (projeto)
+            java.io.File f = new java.io.File("src/com/tetris/view/resources/menu_bg.png");
+            if (f.exists()) {
+                backgroundImage = ImageIO.read(f);
+                System.out.println("OverlayPanel: loaded background image from filesystem: " + f.getAbsolutePath());
+                return;
+            }
+
+            // Nenhuma imagem encontrada
+            backgroundImage = null;
+            System.out.println("OverlayPanel: no background image found (looked in classpath and src/ path)");
+        } catch (IOException e) {
+            backgroundImage = null;
+            System.out.println("OverlayPanel: error loading background image: " + e.getMessage());
+        }
     }
 
     private void initBlinker() {
@@ -62,16 +102,52 @@ public class OverlayPanel extends JPanel {
             @Override
             public void actionPerformed(ActionEvent e) {
                 if (controller != null) {
+                    // passa o nome para o controller antes de iniciar
+                    if (nameField != null) {
+                        controller.setPlayerName(nameField.getText());
+                    }
                     controller.startGameFromUI();
                 }
             }
         });
         setLayout(null);
+        // Campo de nome do jogador
+        nameLabel = new javax.swing.JLabel("Nome:");
+        nameLabel.setFont(new Font("Consolas", Font.PLAIN, 14));
+        nameLabel.setForeground(Color.WHITE);
+        nameLabel.setVisible(false);
+        add(nameLabel);
+
+        nameField = new javax.swing.JTextField();
+        nameField.setFont(new Font("Consolas", Font.PLAIN, 14));
+        nameField.setVisible(false);
+        add(nameField);
+
+        // Atualiza o estado do botão ao digitar
+        nameField.getDocument().addDocumentListener(new javax.swing.event.DocumentListener() {
+            private void update() {
+                String s = nameField.getText();
+                startButton.setEnabled(s != null && !s.trim().isEmpty());
+            }
+            @Override public void insertUpdate(javax.swing.event.DocumentEvent e) { update(); }
+            @Override public void removeUpdate(javax.swing.event.DocumentEvent e) { update(); }
+            @Override public void changedUpdate(javax.swing.event.DocumentEvent e) { update(); }
+        });
+
         add(startButton);
     }
 
     public void setController(GameController controller) {
         this.controller = controller;
+    }
+
+    /**
+     * Solicita foco para o campo de nome (usado quando o controller precisa que o usuário digite o nome).
+     */
+    public void requestFocusForName() {
+        if (nameField != null) {
+            nameField.requestFocusInWindow();
+        }
     }
 
     /**
@@ -96,14 +172,30 @@ public class OverlayPanel extends JPanel {
         int x = (getWidth() - w) / 2;
         // posiciona o botão na parte inferior, com um padding de 40px do fundo
         int y = Math.max(20, getHeight() - h - 40);
+        // coloca o campo de nome acima do botão
+        int nameW = 200;
+        int nameH = 28;
+        int nameX = (getWidth() - nameW) / 2;
+        int nameY = y - nameH - 12;
+        nameLabel.setBounds(nameX, nameY - 18, nameW, 18);
+        nameField.setBounds(nameX, nameY, nameW, nameH);
+
         startButton.setBounds(x, y, w, h);
+        // start habilitado somente se tiver nome
+        String s = nameField.getText();
+        startButton.setEnabled(s != null && !s.trim().isEmpty());
     }
 
     public void updateBoard(Board board) {
         this.board = board;
         // Mostrar/ocultar o botão Start conforme o estado do jogo
         if (startButton != null) {
-            startButton.setVisible(board != null && !board.isStarted());
+            boolean showMenu = (board != null && !board.isStarted());
+            startButton.setVisible(showMenu);
+            if (nameField != null && nameLabel != null) {
+                nameField.setVisible(showMenu);
+                nameLabel.setVisible(showMenu);
+            }
             layoutStartButton();
         }
     }
@@ -127,8 +219,17 @@ public class OverlayPanel extends JPanel {
     }
 
     private void drawStartScreen(Graphics g) {
-        g.setColor(new Color(0, 0, 0, 180));
-        g.fillRect(0, 0, getWidth(), getHeight());
+        // Desenha imagem de fundo se existir, caso contrário usa um overlay escuro
+        if (backgroundImage != null) {
+            // escala a imagem para preencher o painel
+            g.drawImage(backgroundImage.getScaledInstance(getWidth(), getHeight(), Image.SCALE_SMOOTH), 0, 0, null);
+            // aplica uma camada semi-transparente para aumentar contraste do texto
+            g.setColor(new Color(0, 0, 0, 120));
+            g.fillRect(0, 0, getWidth(), getHeight());
+        } else {
+            g.setColor(new Color(0, 0, 0, 180));
+            g.fillRect(0, 0, getWidth(), getHeight());
+        }
         
         g.setColor(Color.WHITE);
         g.setFont(new Font("Consolas", Font.BOLD, 36));
