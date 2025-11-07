@@ -3,17 +3,14 @@ package com.tetris.view;
 import com.tetris.model.Theme;
 
 import javax.swing.JPanel;
-import java.awt.BorderLayout;
 import javax.swing.JButton;
-import javax.swing.Box;
-import javax.swing.BoxLayout;
+import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import javax.swing.SwingUtilities;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import javax.swing.JFrame;
-import com.tetris.view.HistoryDialog;
 import javax.swing.BorderFactory;
 import java.awt.Color;
 import java.awt.Font;
@@ -113,4 +110,3 @@ public class GamePanel extends JPanel {
         return infoPanel;
     }
 }
-

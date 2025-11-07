@@ -19,19 +19,19 @@ public record Theme(
      * O tema escuro original do jogo.
      */
     public static final Theme CLASSIC_DARK = new Theme(
-        "Clássico Escuro",
-        new Color(40, 40, 55),
-        new Color(20, 20, 30),
-        new Color(50, 50, 70),
+        "Roxo Escuro",
+        new Color(45, 25, 65),      // fundo UI - roxo escuro profundo
+        new Color(30, 15, 45),      // fundo tabuleiro - roxo mais escuro ainda
+        new Color(60, 40, 80),      // grid - roxo médio-escuro para linhas
         new Color[] {
-            new Color(0, 0, 0),       // NoShape
-            new Color(204, 102, 102), // ZShape
-            new Color(102, 204, 102), // SShape
-            new Color(102, 102, 204), // LineShape
-            new Color(204, 204, 102), // TShape
-            new Color(204, 102, 204), // SquareShape
-            new Color(102, 204, 204), // LShape
-            new Color(218, 170, 0)    // MirroredLShape
+            new Color(20, 10, 30),      // NoShape - quase preto com tom roxo
+            new Color(140, 60, 180),    // ZShape - roxo médio vibrante
+            new Color(100, 40, 150),    // SShape - roxo profundo
+            new Color(80, 30, 120),     // LineShape - roxo escuro rico
+            new Color(120, 50, 160),    // TShape - roxo médio-escuro
+            new Color(160, 80, 200),    // SquareShape - roxo mais claro
+            new Color(90, 35, 130),     // LShape - roxo profundo médio
+            new Color(130, 55, 170)     // MirroredLShape - roxo vibrante escuro
         }
     );
 
@@ -40,18 +40,18 @@ public record Theme(
      */
   public static final Theme LIGHT = new Theme(
     "Claro",
-    new Color(230, 220, 240),  // fundo principal - lavanda clara
-    new Color(245, 240, 255),  // destaque - quase branco com toque lilás
-    new Color(210, 200, 230),  // bordas - lilás suave
+    new Color(230, 210, 255),  // fundo principal - lilás claro suave
+    new Color(235, 225, 245),  // fundo do tabuleiro - roxo suave
+    new Color(205, 195, 225),  // grid - roxo médio para linhas
     new Color[] {
-        new Color(90, 60, 120),    // roxo escuro
-        new Color(130, 80, 160),   // violeta médio
-        new Color(170, 110, 200),  // lilás
-        new Color(200, 140, 220),  // lavanda viva
-        new Color(220, 180, 240),  // lavanda clara
-        new Color(150, 90, 180),   // púrpura médio
-        new Color(180, 130, 210),  // ametista
-        new Color(240, 200, 250)   // rosa arroxeado claro
+        new Color(90, 60, 120),    // NoShape - roxo escuro
+        new Color(186, 104, 200),  // Z - roxo-rosa vibrante
+        new Color(149, 102, 230),  // S - roxo médio-claro
+        new Color(140, 90, 210),   // Line - roxo médio
+        new Color(170, 120, 240),  // T - roxo-azulado
+        new Color(190, 150, 250),  // Square - lavanda clara
+        new Color(160, 100, 220),  // L - roxo médio-escuro
+        new Color(200, 160, 255)   // MirroredL - lilás claro
     }
 );
         

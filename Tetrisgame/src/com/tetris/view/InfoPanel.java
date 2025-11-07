@@ -91,8 +91,9 @@ public class InfoPanel extends JPanel {
      * Helper para desenhar um bloco de informação estilizado.
      */
     private int drawInfoBlock(Graphics2D g, String title, String value, int x, int y, int width, int height, Color textColor) {
-        Color blockColor = currentTheme.uiBackground().darker();
-        Color borderColor = currentTheme.uiBackground().brighter();
+        // Cor #FFFFF0 (ivory) para o fundo dos blocos de informação
+        Color blockColor = new Color(0xFF, 0xFF, 0xF0);
+        Color borderColor = blockColor.darker();
 
         g.setColor(blockColor);
         g.fillRoundRect(x, y, width, height, 15, 15);
@@ -100,7 +101,7 @@ public class InfoPanel extends JPanel {
         g.setColor(borderColor);
         g.drawRoundRect(x, y, width, height, 15, 15);
         
-        g.setColor(textColor);
+        g.setColor(Color.BLACK);  // Define a cor do texto como preta
         g.setFont(new Font("Consolas", Font.PLAIN, 14));
         g.drawString(title, x + 15, y + 22);
         
@@ -114,15 +115,15 @@ public class InfoPanel extends JPanel {
      * Helper para desenhar o painel da próxima peça.
      */
     private int drawNextPiecePanel(Graphics2D g, String title, int x, int y, int width, int height, Color textColor) {
-        Color blockColor = currentTheme.uiBackground().darker();
-        Color borderColor = currentTheme.uiBackground().brighter();
+        Color blockColor = new Color(0xFF, 0xFF, 0xF0);  // Cor ivory
+        Color borderColor = blockColor.darker();
 
         g.setColor(blockColor);
         g.fillRoundRect(x, y, width, height, 15, 15);
         g.setColor(borderColor);
         g.drawRoundRect(x, y, width, height, 15, 15);
 
-        g.setColor(textColor);
+        g.setColor(Color.BLACK);
         g.setFont(new Font("Consolas", Font.PLAIN, 14));
         g.drawString(title, x + 15, y + 22);
         
@@ -144,15 +145,15 @@ public class InfoPanel extends JPanel {
      * Helper para desenhar o painel de dica de controle.
      */
     private void drawControlHintBlock(Graphics2D g, String text, int x, int y, int width, int height, Color textColor) {
-        Color blockColor = currentTheme.uiBackground().darker();
-        Color borderColor = currentTheme.uiBackground().brighter();
+        Color blockColor = new Color(0xFF, 0xFF, 0xF0);  // Cor ivory
+        Color borderColor = blockColor.darker();
 
         g.setColor(blockColor);
         g.fillRoundRect(x, y, width, height, 15, 15);
         g.setColor(borderColor);
         g.drawRoundRect(x, y, width, height, 15, 15);
 
-        g.setColor(textColor);
+        g.setColor(Color.BLACK);
         g.setFont(new Font("Consolas", Font.BOLD, 18));
         
         // Centraliza o texto

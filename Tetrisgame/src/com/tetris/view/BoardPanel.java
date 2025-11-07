@@ -42,6 +42,7 @@ public class BoardPanel extends JPanel {
 
         drawBoardBackground(g);
         drawGrid(g);
+        drawGameOverLine(g);
         drawPlacedPieces(g);
         
         // Desenha a peça fantasma antes da peça real
@@ -52,6 +53,22 @@ public class BoardPanel extends JPanel {
     private void drawBoardBackground(Graphics g) {
         g.setColor(currentTheme.boardBackground());
         g.fillRect(0, 0, getWidth(), getHeight());
+    }
+
+    /**
+     * Desenha uma linha vermelha semi-transparente indicando a altura onde
+     * game over acontece (quando uma nova peça não consegue ser posicionada).
+     */
+    private void drawGameOverLine(Graphics g) {
+        int squareSize = getSquareSize();
+        // Uma nova peça começa no topo + minY(); se não couber ali = game over
+        int gameOverY = Board.BOARD_HEIGHT - 2; // 2 blocos mais abaixo
+        int y = (Board.BOARD_HEIGHT - 1 - gameOverY) * squareSize;
+
+        // Cria uma linha vermelha semi-transparente
+        Color redLine = new Color(255, 0, 0, 128);
+        g.setColor(redLine);
+        g.fillRect(0, y - 2, getWidth(), 4);
     }
 
     private void drawGrid(Graphics g) {
