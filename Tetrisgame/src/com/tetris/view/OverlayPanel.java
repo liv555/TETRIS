@@ -53,9 +53,9 @@ public class OverlayPanel extends JPanel {
             // Tenta localizar a imagem no classpath em vários locais
             java.net.URL url = null;
             // 1) caminho absoluto padrão: /com/tetris/view/resources/menu_bg.png
-            url = getClass().getResource("/com/tetris/view/resources/menu_bg.png");
+            url = getClass().getResource("/com/tetris/view/resources/menu.jpeg");
             // 2) antigo caminho alternativo: /resources/menu_bg.png
-            if (url == null) url = getClass().getResource("/resources/menu_bg.png");
+            if (url == null) url = getClass().getResource("/resources/menu.jpeg");
 
             if (url != null) {
                 backgroundImage = ImageIO.read(url);
@@ -64,7 +64,7 @@ public class OverlayPanel extends JPanel {
             }
 
             // 3) fallback: tenta carregar diretamente do sistema de arquivos (projeto)
-            java.io.File f = new java.io.File("src/com/tetris/view/resources/menu_bg.png");
+            java.io.File f = new java.io.File("src/com/tetris/view/resources/menu.jpeg");
             if (f.exists()) {
                 backgroundImage = ImageIO.read(f);
                 System.out.println("OverlayPanel: loaded background image from filesystem: " + f.getAbsolutePath());
@@ -245,7 +245,7 @@ public class OverlayPanel extends JPanel {
         y = getHeight() - 150;
         // Pisca o texto de instrução quando o jogo ainda não iniciou
         if (showPress) {
-            String text = "Pressione ENTER para Jogar";
+            String text = "Digite seu nome para Jogar";
             int stringWidth = g.getFontMetrics().stringWidth(text);
             g.drawString(text, (getWidth() - stringWidth) / 2, y);
         }

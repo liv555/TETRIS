@@ -100,4 +100,18 @@ public class Database {
         }
         return history;
     }
+
+    public static void clearHistory() {
+        try (Connection conn = connect()) {
+            if (conn == null) return;
+            try (Statement stmt = conn.createStatement()) {
+                stmt.executeUpdate("DELETE FROM game_session");
+                stmt.executeUpdate("DELETE FROM sqlite_sequence WHERE name='game_session'");
+                System.out.println("Histórico limpo e contador de IDs reiniciado!");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
 }
